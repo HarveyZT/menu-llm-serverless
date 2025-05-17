@@ -1,0 +1,14 @@
+name = "menu-llm-worker"
+main = "src/index.js"
+compatibility_date = "2025-05-17"
+
+account_id = "<TU_ACCOUNT_ID>"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "MENUS_DB"
+
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "<TU_KV_NAMESPACE_ID>"
