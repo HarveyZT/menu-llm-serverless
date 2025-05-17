@@ -2,7 +2,7 @@ name = "menu-llm-worker"
 main = "src/index.js"
 compatibility_date = "2025-05-17"
 
-account_id = "<TU_ACCOUNT_ID>"
+account_id = "330239b1c608a24cedc67ec8374395f2"
 workers_dev = true
 
 [[d1_databases]]

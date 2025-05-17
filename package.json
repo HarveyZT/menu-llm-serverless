@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "dev": "wrangler dev src/index.js",
+  "start": "wrangler publish"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HarveyZT/menu-llm-serverless.git"
