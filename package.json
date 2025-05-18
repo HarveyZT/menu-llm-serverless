@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "dev": "wrangler dev src/index.js",
-  "start": "wrangler publish"
-},
+    "dev": "wrangler dev src/index.js",
+    "build": "cd frontend && npm install && npm run build",
+    "start": "wrangler publish"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HarveyZT/menu-llm-serverless.git"
@@ -16,6 +17,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/HarveyZT/menu-llm-serverless/issues"
+  },
+  "dependencies": {
+    "openai":"^4.0.0"
   },
   "homepage": "https://github.com/HarveyZT/menu-llm-serverless#readme"
 }

@@ -1,20 +1,16 @@
 import { handleGenerateMenu } from './openai.js';
-import { sendTelegram } from './telegram.js';
+import { sendToSheets } from './sheets.js';
 
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url);
-    if (url.pathname === '/generate-menu' && request.method === 'POST') {
-      const { userId, chatId } = await request.json();
-      const menu = await handleGenerateMenu({ userId }, env.DB);
-      await env.DB.prepare(
-        `INSERT INTO menus (id, user_id, menu_date, content) VALUES (?, ?, ?, ?)`
-      )
-      .bind(menu.id, userId, menu.date, JSON.stringify(menu.items))
-      .run();
-      await sendTelegram(env.TELEGRAM_TOKEN, chatId, menu.items);
+    if (request.method === 'POST' && new URL(request.url).pathname === '/generate-menu') {
+      const { calories, macros, sheetUrl } = await request.json();
+      // 1. Genera menú con OpenAI
+      const menu = await handleGenerateMenu({ calories, macros }, env.OPENAI_KEY);
+      // 2. Envía a Google Sheets
+      await sendToSheets(env.SHEETS_WEBHOOK, menu, sheetUrl);
       return new Response(JSON.stringify(menu), { status: 200 });
     }
     return new Response('Not found', { status: 404 });
   }
-};
+}
