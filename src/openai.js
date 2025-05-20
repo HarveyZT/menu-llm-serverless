@@ -3,7 +3,8 @@
  * @param {{ calories: number, macros: { carbs: number, fats: number, protein: number }}} options
  * @param {string} options.calories - Calorías diarias deseadas.
  * @param {object} options.macros - Distribución de macronutrientes en %.
- * @returns {Promise<object>} Devuelve un objeto JSON 
+ * @param {string} apiKey - Clave secreta de OpenAI accesible via env.
+ * @returns {Promise<object>} Devuelve un objeto JavaScript con el menú.
  */
 export async function handleGenerateMenu({ calories, macros }, apiKey) {
   // Preparamos la petición a OpenAI
@@ -20,16 +21,16 @@ export async function handleGenerateMenu({ calories, macros }, apiKey) {
         {
           role: 'system',
           content: `Eres un nutricionista experto con experiencia en fitness y salud. ` +
-            `Minimiza grasas trans y saturadas y sal añadida. ` +
-            `Solo considera vegetales altos en proteína y tubérculos; otros vegetales de uso libre.`
+                   `Minimiza grasas trans y saturadas y sal añadida. ` +
+                   `Solo considera vegetales altos en proteína y tubérculos; otros vegetales de uso libre.`
         },
         // Mensaje de usuario: parámetros concretos del menú
         {
           role: 'user',
           content: `Crea un menú semanal de 7 días con ${calories} calorías diarias, ` +
-            `distribuidas en macros: ${macros.carbs}% carbohidratos, ` +
-            `${macros.fats}% grasas, ${macros.protein}% proteínas. ` +
-            `Devuélvelo como JSON con la forma { "Lunes": ["plato1", ...], ..., "Domingo": [...] }.`
+                   `distribuidas en macros: ${macros.carbs}% carbohidratos, ` +
+                   `${macros.fats}% grasas, ${macros.protein}% proteínas. ` +
+                   `Devuélvelo como JSON con la forma { "Lunes": ["plato1", ...], ..., "Domingo": [...] }.`
         }
       ]
     })
@@ -50,13 +51,23 @@ export async function handleGenerateMenu({ calories, macros }, apiKey) {
     throw new Error('OpenAI API returned no content');
   }
 
+  // Limpieza de posibles code fences de Markdown
+  let jsonString = content.trim();
+  if (jsonString.startsWith('```')) {
+    // Eliminamos el primer code fence con optional 'json'
+    jsonString = jsonString.replace(/^```(?:json)?\r?\n/, '');
+    // Eliminamos el code fence de cierre
+    jsonString = jsonString.replace(/\r?\n```$/, '');
+  }
+
   // Convertimos la cadena JSON a objeto JavaScript
   let menu;
   try {
-    menu = JSON.parse(content);
+    menu = JSON.parse(jsonString);
   } catch (err) {
     throw new Error('Error parsing JSON from OpenAI: ' + err.message);
   }
 
   return menu;
 }
+
