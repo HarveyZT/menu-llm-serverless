@@ -1,25 +1,33 @@
 {
   "name": "menu-llm-serverless",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "MVP serverless para generación de menús nutricionales con LLM, Cloudflare y Google Sheets",
   "scripts": {
     "dev": "wrangler dev src/index.js",
-    "build": "cd frontend && npm install && npm run build",
-    "start": "wrangler publish"
+    "build": "cd frontend && npm ci && npm run build",
+    "deploy": "wrangler deploy",
+    "serve": "serve -s frontend/build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HarveyZT/menu-llm-serverless.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["serverless","cloudflare","react","llm","google-sheets"],
+  "author": "Jairo Peset <lopezbuenoj@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/HarveyZT/menu-llm-serverless#readme",
   "bugs": {
     "url": "https://github.com/HarveyZT/menu-llm-serverless/issues"
   },
-  "dependencies": {
-    "openai":"^4.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   },
-  "homepage": "https://github.com/HarveyZT/menu-llm-serverless#readme"
+  "dependencies": {
+    "openai": "^4.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0",
+    "wrangler": "^4.15.2"
+  }
 }
+
