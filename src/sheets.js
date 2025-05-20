@@ -7,7 +7,7 @@
  * @returns {Promise<string>} - Respuesta del webhook (texto plano o JSON).
  * @throws {Error} - Si la petición falla o el webhook devuelve un estado no OK.
  */
-export async function sendToSheets(webhookUrl, menu) {
+export async function sendToSheets(webhookUrl, menu, sheetUrl) {
   // Validación básica de parámetros
   if (!webhookUrl) {
     throw new Error('sendToSheets: falta la URL del webhook.');
