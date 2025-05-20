@@ -32,7 +32,7 @@ export default {
         const menu = await handleGenerateMenu({ calories, macros }, env.OPENAI_KEY);
 
         // 2. Enviamos el menú a Google Sheets (Apps Script Webhook)
-        await sendToSheets(env.SHEETS_WEBHOOK, menu);
+        await sendToSheets(env.SHEETS_WEBHOOK, menu, sheetUrl);
 
         // 3. Devolvemos el menú generado como JSON
         return new Response(JSON.stringify(menu), {

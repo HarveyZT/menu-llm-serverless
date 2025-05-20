@@ -3,7 +3,7 @@
  * @param {{ calories: number, macros: { carbs: number, fats: number, protein: number }}} options
  * @param {string} options.calories - Calorías diarias deseadas.
  * @param {object} options.macros - Distribución de macronutrientes en %.
- * @returns {Promise<object>} Devuelve un objeto JSON con la estructura { lunes: [...], martes: [...], ... }.
+ * @returns {Promise<object>} Devuelve un objeto JSON 
  */
 export async function handleGenerateMenu({ calories, macros }, apiKey) {
   // Preparamos la petición a OpenAI

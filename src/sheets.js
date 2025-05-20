@@ -12,6 +12,11 @@ export async function sendToSheets(webhookUrl, menu) {
   if (!webhookUrl) {
     throw new Error('sendToSheets: falta la URL del webhook.');
   }
+  
+  if (!sheetUrl) {
+    throw new Error('sendToSheets: falta la URL de Google Sheet.');
+  }
+
   if (typeof menu !== 'object') {
     throw new Error('sendToSheets: el menú debe ser un objeto.');
   }
@@ -22,7 +27,7 @@ export async function sendToSheets(webhookUrl, menu) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ menu })
+    body: JSON.stringify({ menu, sheetUrl })
   });
 
   // Comprobamos que la petición fue exitosa
