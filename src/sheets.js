@@ -2,8 +2,7 @@
  * sendToSheets: envía el menú al Webhook de Google Apps Script para volcar datos en Google Sheets.
  *
  * @param {string} webhookUrl - URL pública del Apps Script (doPost).
- * @param {object} menu - Objeto con la estructura del menú, p.ej.
- *                        { "Lunes": ["plato1", "plato2"], ... }
+ * @param {object} menu - Objeto con la estructura del menú
  * @returns {Promise<string>} - Respuesta del webhook (texto plano o JSON).
  * @throws {Error} - Si la petición falla o el webhook devuelve un estado no OK.
  */
