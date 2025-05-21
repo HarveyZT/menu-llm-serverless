@@ -26,10 +26,10 @@ export default {
     if (request.method === 'POST' && url.pathname === '/generate-menu') {
       try {
         // Extraemos calorías, macros y la URL del Google Sheets del cuerpo
-        const { calories, macros, sheetUrl } = await request.json();
+        const { calories, macros, sheetUrl, dietType, mealsPerDay } = await request.json();
 
         // 1. Generamos el menú usando OpenAI
-        const menu = await handleGenerateMenu({ calories, macros }, env.OPENAI_KEY);
+        const menu = await handleGenerateMenu({ calories, macros, dietType, mealsPerDay }, env.OPENAI_KEY);
 
         // 2. Enviamos el menú a Google Sheets (Apps Script Webhook)
         await sendToSheets(env.SHEETS_WEBHOOK, menu, sheetUrl);
