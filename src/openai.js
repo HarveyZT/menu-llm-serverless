@@ -29,7 +29,7 @@ export async function handleGenerateMenu({ calories, macros }, apiKey) {
           role: 'user',
           content: `Crea un menú semanal de 7 días con ${calories} calorías diarias, ` +
                    `distribuidas en macros: ${macros.carbs}% carbohidratos, ` +
-                   `${macros.fats}% grasas, ${macros.protein}% proteínas. ` +
+                   `${macros.fats}% grasas, ${macros.protein}% proteínas. Indicando los gramos en seco de cada alimento` +
                    `Devuélvelo como JSON con la forma { "Lunes": ["plato1", ...], ..., "Domingo": [...] }.`
         }
       ]

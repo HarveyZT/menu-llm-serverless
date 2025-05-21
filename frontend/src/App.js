@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// Importa tu logo (pon logo.png en src/)
 import logo from './logo.png';
 
 function App() {
