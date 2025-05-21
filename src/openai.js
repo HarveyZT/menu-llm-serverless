@@ -92,19 +92,33 @@ IMPORTANTE: devuélveme solo un JSON válido, sin texto adicional, sin code-fenc
     throw new Error('OpenAI API returned no content');
   }
 
-  // 7. Limpiar posibles fences de Markdown
+  // 7. Limpiar fences de Markdown y extraer sólo el JSON entre la primera { y la última }
   let jsonString = raw.trim();
   if (jsonString.startsWith('```')) {
-    jsonString = jsonString.replace(/^```(?:json)?\r?\n/, '').replace(/\r?\n```$/, '');
+    jsonString = jsonString
+      .replace(/^```(?:json)?\r?\n/, '')
+      .replace(/\r?\n```$/, '');
   }
-  jsonString = jsonString
-    .replace(/,\s*}/g, '}')   // {...,} → {...}
-    .replace(/,\s*]/g, ']');
+  // 7.1. Buscamos la primera “{” y la última “}”
+  const start = jsonString.indexOf('{');
+  const end   = jsonString.lastIndexOf('}');
+  if (start === -1 || end === -1) {
+    console.error('RAW:', raw);
+    console.error('Limpio (sin fences):', jsonString);
+    throw new Error('Formato inesperado: no se detecta un objeto JSON');
+  }
+  jsonString = jsonString.slice(start, end + 1);
+
+  // 7.2. Eliminamos comas colgantes antes de } o ]
+  jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
 
   // 8. Convertir a objeto JS
   try {
     return JSON.parse(jsonString);
   } catch (err) {
+    console.error('RAW completo:', raw);
+    console.error('JSON extraído:', jsonString);
     throw new Error('Error parsing JSON from OpenAI: ' + err.message);
   }
+
 };
