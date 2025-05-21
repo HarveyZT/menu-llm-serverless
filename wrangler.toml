@@ -1,6 +1,5 @@
 # Nombre del servicio Cloudflare Workers.
 name = "menu-llm-worker"
-type = "javascript"
 
 # Punto de entrada del worker para arrancar la función fetch().
 main = "src/index.js"
@@ -24,6 +23,6 @@ binding = "SESSIONS"
 id = "813e9cd3a97f4d18883de727854666f6"
 
 #——————— Pages (build) ———————
-[[build]]
-  command = "npm install --prefix frontend && npm run build --prefix frontend"
-  pages_build_output_dir = "frontend/build"
+[build]
+command = "npm install --prefix frontend && npm run build --prefix frontend"
+pages_build_output_dir = "frontend/build"
