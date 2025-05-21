@@ -60,7 +60,8 @@ Devuélvelo **solo** como JSON con la forma:
 }
 Al final de cada día añade:
 "_totales": { kcal: XXX, carbs: XX, fats: XX, protein: XX }, 
-"error": YY%  
+"error": YY% 
+IMPORTANTE: devuélveme solo un JSON válido, sin texto adicional, sin code-fences ni comas finales. 
 `.trim()
   };
 
