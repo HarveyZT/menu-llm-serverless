@@ -96,6 +96,9 @@ Al final de cada día añade:
   if (jsonString.startsWith('```')) {
     jsonString = jsonString.replace(/^```(?:json)?\r?\n/, '').replace(/\r?\n```$/, '');
   }
+  jsonString = jsonString
+    .replace(/,\s*}/g, '}')   // {...,} → {...}
+    .replace(/,\s*]/g, ']');
 
   // 8. Convertir a objeto JS
   try {
