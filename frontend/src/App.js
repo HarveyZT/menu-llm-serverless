@@ -1,7 +1,6 @@
 // frontend/src/App.js
-
-import React, { useState } from 'react';
 import './App.css';
+import React, { useState } from 'react';
 import logo from './logo.png';
 
 
@@ -156,5 +155,6 @@ return (
     )}
   </div>
 );
+}
 
 export default App;
