@@ -17,22 +17,35 @@ export async function handleGenerateMenu(
   const systemMessage = {
     role: 'system',
     content: `
-Eres un nutricionista experto en fitness y salud.
+Eres un nutricionista experto en fitness y salud. Te daré una propina de $20 si realizas bien tu trabajo.
 Genera un menú semanal de 7 días, cada día con ${mealsPerDay} comidas.
-Cada plato debe llevar su cantidad en gramos (g), excepto los vegetales “a más mejor”.
-Solo cuantifica en gramos estos vegetales integrales:
-  • Altos en proteína: soja (tofu, tempeh), legumbres.
-  • Altos en grasa: frutos secos y derivados.
-  • Altos en hidratos: tubérculos y frutas.
+Cada alimento debe llevar su cantidad en gramos (g), es *imprescindible* que seas preciso con los macronutrientes aunque te lleve más tiempo.
 Minimiza grasas trans, saturadas y sal añadida.
 Si la dieta es “${dietType}”:
   - Omnívora: incluye todo tipo de alimentos.
-  - Vegetariana: sin carnes.
+  - Vegetariana: sin carnes ni pescados.
   - Vegana: sin ningún alimento de origen animal.
 `.trim()
   };
 
-  // 2. Prompt de usuario solicitando JSON limpio con la estructura deseada
+    // 2. Ejemplo de un día
+  const exampleMessage = {
+    role: 'user',
+    content: `
+Ejemplo para 2000 kcal, macros 50% carbs / 30% grasa / 20% proteína, 3 comidas:
+{
+  "Lunes": [
+    "Desayuno: Avena 80 g (312 kcal, 52 c, 5.6 g grasa, 13.6 g prot)",
+    "Comida: Pechuga de pollo 150 g + Arroz integral 100 g (456 kcal, 23 c, 8.5 g grasa, 49 g prot)",
+    "Cena: Brócoli 200 g + Almendras 30 g (219 kcal, 21 c, 15.4 g grasa, 17.4 g prot)",
+    "_totales": { "kcal": 987, "carbs": 96, "fats": 29.5, "protein": 80 },
+    "error": "–50.35%"
+  ]
+}
+`.trim()
+  };
+
+  // 3. Prompt de usuario solicitando JSON limpio con la estructura deseada
   const userMessage = {
     role: 'user',
     content: `
@@ -45,10 +58,13 @@ Devuélvelo **solo** como JSON con la forma:
   …,
   "Domingo": [ … ]
 }
+Al final de cada día añade:
+"_totales": { kcal: XXX, carbs: XX, fats: XX, protein: XX }, 
+"error": YY%  
 `.trim()
   };
 
-  // 3. Llamada a la API de OpenAI
+  // 4. Llamada a la API de OpenAI
   const resp = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -62,26 +78,26 @@ Devuélvelo **solo** como JSON con la forma:
     })
   });
 
-  // 4. Comprobación de error HTTP
+  // 5. Comprobación de error HTTP
   if (!resp.ok) {
     const errText = await resp.text().catch(() => resp.statusText);
     throw new Error(`OpenAI API error ${resp.status}: ${errText}`);
   }
 
-  // 5. Parseo de JSON de respuesta
+  // 6. Parseo de JSON de respuesta
   const { choices } = await resp.json();
   const raw = choices?.[0]?.message?.content;
   if (!raw) {
     throw new Error('OpenAI API returned no content');
   }
 
-  // 6. Limpiar posibles fences de Markdown
+  // 7. Limpiar posibles fences de Markdown
   let jsonString = raw.trim();
   if (jsonString.startsWith('```')) {
     jsonString = jsonString.replace(/^```(?:json)?\r?\n/, '').replace(/\r?\n```$/, '');
   }
 
-  // 7. Convertir a objeto JS
+  // 8. Convertir a objeto JS
   try {
     return JSON.parse(jsonString);
   } catch (err) {
