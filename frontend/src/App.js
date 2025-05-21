@@ -1,120 +1,133 @@
+// frontend/src/App.js
+
 import React, { useState } from 'react';
-import logo from './logo.png';
+import './App.css';
+
+
+// URL de tu Worker serverless (ajusta el subdominio según tu despliegue)
+const WORKER_URL = 'https://menu-llm-worker.lopezbuenoj.workers.dev/generate-menu';
 
 function App() {
+  // Estados de entrada del formulario
   const [calories, setCalories] = useState(2000);
   const [carbs, setCarbs] = useState(50);
   const [fats, setFats] = useState(30);
   const [protein, setProtein] = useState(20);
   const [sheetUrl, setSheetUrl] = useState('');
   const [dietType, setDietType] = useState('omnivora');
-  const [mealsPerDay, setMealsPerDay] = useState(3);
+  const [mealsPerDay, setMeals] = useState('3');
+
+  // Estado para el resultado del menú y control de UI
   const [menuResult, setMenuResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  // Función que maneja el envío del formulario
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Evita recarga de página
     setLoading(true);
     setError('');
+    setMenuResult(null);
+
     try {
-      const res = await fetch(
-        'https://menu-llm-worker.lopezbuenoj.workers.dev/generate-menu',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            calories,
-            macros: { carbs, fats, protein },
-            sheetUrl,
-            dietType,       // <- Nuevo
-            mealsPerDay     // <- Nuevo
-          })
-        }
-      );
-      if (!res.ok) {
-        throw new Error(`Error ${res.status}`);
+      // Llamada POST a tu Worker con los parámetros
+      const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          calories,
+          macros: { carbs, fats, protein },
+          sheetUrl,
+          dietType,
+          mealsPerDay
+        }),
+      });
+
+      // Si la respuesta no es OK, lanzamos un error
+      if (!response.ok) {
+        throw new Error(`Error en la petición: ${response.status}`);
       }
-      const menu = await res.json();
+
+      // Parseamos el JSON y actualizamos el estado
+      const menu = await response.json();
       setMenuResult(menu);
+
     } catch (err) {
+      // Mostramos cualquier error ocurrido
       setError(err.message);
+
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      {/* Logo centrado */}
-      <img src={logo} alt="Logo" className="w-24 h-auto mb-6" />
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Generador de Menús Nutricionales</h1>
 
-      <h1 className="text-3xl font-bold mb-6">Generador de Menús Nutricionales</h1>
-
-      <form 
-        onSubmit={handleSubmit} 
-        className="w-full max-w-md bg-white p-6 rounded-lg shadow-md space-y-4"
-      >
-        {/* Calorías */}
+      {/* Formulario de parámetros */}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Calorías diarias */}
         <div>
-          <label className="block font-medium mb-1">Calorías diarias:</label>
+          <label>Calorías diarias:</label>
           <input
             type="number"
             value={calories}
-            onChange={e => setCalories(+e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            onChange={(e) => setCalories(+e.target.value)}
+            className="border px-2 py-1 w-full"
           />
         </div>
 
-        {/* Macros */}
+        {/* Macros en porcentaje */}
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block font-medium mb-1">% Carbohidratos:</label>
+            <label>% Carbohidratos:</label>
             <input
               type="number"
               value={carbs}
-              onChange={e => setCarbs(+e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              onChange={(e) => setCarbs(+e.target.value)}
+              className="border px-2 py-1 w-full"
             />
           </div>
           <div>
-            <label className="block font-medium mb-1">% Grasas:</label>
+            <label>% Grasas:</label>
             <input
               type="number"
               value={fats}
-              onChange={e => setFats(+e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              onChange={(e) => setFats(+e.target.value)}
+              className="border px-2 py-1 w-full"
             />
           </div>
           <div>
-            <label className="block font-medium mb-1">% Proteínas:</label>
+            <label>% Proteínas:</label>
             <input
               type="number"
               value={protein}
-              onChange={e => setProtein(+e.target.value)}
-              className="w-full border rounded px-3 py-2"
+              onChange={(e) => setProtein(+e.target.value)}
+              className="border px-2 py-1 w-full"
             />
           </div>
         </div>
 
-        {/* Sheets URL */}
+        {/* URL de Google Sheets */}
         <div>
-          <label className="block font-medium mb-1">URL de Google Sheet:</label>
+          <label>URL de Google Sheet:</label>
           <input
             type="text"
             value={sheetUrl}
-            onChange={e => setSheetUrl(e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            onChange={(e) => setSheetUrl(e.target.value)}
+            className="border px-2 py-1 w-full"
           />
         </div>
 
-        {/* Desplegable Tipo de Dieta */}
+        {/* Tipo de dieta - desplegable */}
+
         <div>
-          <label className="block font-medium mb-1">Tipo de dieta:</label>
+          <label>Tipo de dieta:</label>
           <select
             value={dietType}
             onChange={e => setDietType(e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            className="border px-2 py-1 w-full"
           >
             <option value="omnivora">Omnívora</option>
             <option value="vegetariana">Vegetariana</option>
@@ -122,39 +135,45 @@ function App() {
           </select>
         </div>
 
-        {/* Desplegable Número de Comidas */}
+        {/* Número de comidas - desplegable */}
+
         <div>
-          <label className="block font-medium mb-1">Comidas al día:</label>
+          <label>Número de comidas:</label>
           <select
             value={mealsPerDay}
-            onChange={e => setMealsPerDay(+e.target.value)}
-            className="w-full border rounded px-3 py-2"
+            onChange={e => setMeals(e.target.value)}
+            className="border px-2 py-1 w-full"
           >
-            {[1,2,3,4,5].map(n => (
-              <option key={n} value={n}>{n} comida{n>1?'s':''}</option>
-            ))}
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
 
+        {/* Botón de envío */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
         >
           {loading ? 'Generando…' : 'Generar Menú'}
         </button>
-
-        {error && <p className="text-red-500 mt-2">{error}</p>}
       </form>
 
+      {/* Mostrar error si existe */}
+      {error && <p className="text-red-500 mt-4">Error: {error}</p>}
+
+      {/* Mostrar menú generado */}
       {menuResult && (
-        <div className="w-full max-w-md mt-6 bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-2">Menú Generado</h2>
-          <pre className="text-sm bg-gray-100 p-2 rounded overflow-auto">
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">Menú Generado</h2>
+          <pre className="bg-gray-100 p-4 overflow-auto">
             {JSON.stringify(menuResult, null, 2)}
           </pre>
           <p className="mt-2 text-green-600">
-            ✅ La hoja de Google Sheets debería haberse actualizado.
+            ✅ Tu Google Sheet debería haberse actualizado.
           </p>
         </div>
       )}
