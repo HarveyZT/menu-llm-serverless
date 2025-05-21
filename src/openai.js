@@ -23,7 +23,7 @@ Cada alimento debe llevar su cantidad en gramos (g), es *imprescindible* que sea
 Minimiza grasas trans, saturadas y sal añadida.
 Si la dieta es “${dietType}”:
   - Omnívora: incluye todo tipo de alimentos.
-  - Vegetariana: sin ningún tipo de carnes, ni aves, ni pescados.
+  - Vegetariana: sin ningún tipo de carnes, ni aves, ni pescados, ni pollo de ningún tipo.
   - Vegana: sin ningún alimento de origen animal.
 `.trim()
   };
