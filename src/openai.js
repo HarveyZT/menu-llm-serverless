@@ -23,7 +23,7 @@ Cada alimento debe llevar su cantidad en gramos (g), es *imprescindible* que sea
 Minimiza grasas trans, saturadas y sal añadida.
 Si la dieta es “${dietType}”:
   - Omnívora: incluye todo tipo de alimentos.
-  - Vegetariana: sin carnes ni pescados.
+  - Vegetariana: sin ningún tipo de carnes, ni aves, ni pescados.
   - Vegana: sin ningún alimento de origen animal.
 `.trim()
   };
@@ -96,25 +96,30 @@ IMPORTANTE: devuélveme solo un JSON válido, sin texto adicional, sin code-fenc
       .replace(/^```(?:json)?\r?\n/, '')
       .replace(/\r?\n```$/, '');
   }
-  // 7.1. Buscamos la primera “{” y la última “}”
   const start = jsonString.indexOf('{');
   const end   = jsonString.lastIndexOf('}');
   if (start === -1 || end === -1) {
     console.error('RAW:', raw);
-    console.error('Limpio (sin fences):', jsonString);
-    throw new Error('Formato inesperado: no se detecta un objeto JSON');
+    console.error('Sin fences:', jsonString);
+    throw new Error('Formato inesperado: no detecto un objeto JSON');
   }
   jsonString = jsonString.slice(start, end + 1);
 
-  // 7.2. Eliminamos comas colgantes antes de } o ]
+  // 7.1. Eliminar comas colgantes antes de } o ]
   jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
+
+  // 7.2. Eliminar la letra “g” tras valores numéricos (250g → 250)
+  jsonString = jsonString.replace(/(\d+)g\b/g, '$1');
+
+  // 7.3. Convertir error 0% en cadena válida ("0%")
+  jsonString = jsonString.replace(/"error":\s*([\d.]+)%/g, '"error":"$1%"');
 
   // 8. Convertir a objeto JS
   try {
     return JSON.parse(jsonString);
   } catch (err) {
     console.error('RAW completo:', raw);
-    console.error('JSON extraído:', jsonString);
+    console.error('JSON procesado:', jsonString);
     throw new Error('Error parsing JSON from OpenAI: ' + err.message);
   }
 
