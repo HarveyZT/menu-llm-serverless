@@ -22,9 +22,9 @@ Genera un menú semanal de 7 días, cada día con ${mealsPerDay} comidas.
 Cada alimento debe llevar su cantidad en gramos (g), es *imprescindible* que seas preciso con los macronutrientes aunque te lleve más tiempo.
 Minimiza grasas trans, saturadas y sal añadida.
 Si la dieta es “${dietType}”:
-  - Omnívora: incluye todo tipo de alimentos.
-  - Vegetariana: sin ningún tipo de carnes, ni aves, ni pescados, ni pollo de ningún tipo.
-  - Vegana: sin ningún alimento de origen animal.
+  - "Omnívora": incluye todo tipo de alimentos.
+  - "Vegetariana": sin ningún tipo de carnes, ni aves, ni pescados, ni pollo de ningún tipo.
+  - "Vegana": sin ningún alimento de origen animal.
 `.trim()
   };
 
@@ -89,13 +89,11 @@ IMPORTANTE: devuélveme solo un JSON válido, sin texto adicional, sin code-fenc
   jsonString = jsonString.slice(start, end + 1);
 
   // 6.1. Eliminar comas colgantes antes de } o ]
-  jsonString = jsonString.replace(/,(\s*[}\]])/g, '$1');
+  jsonString = jsonString.replace(/,(\s*[}\]])/, '$1');
 
   // 6.2. Eliminar la letra “g” tras valores numéricos (250g → 250)
-  jsonString = jsonString.replace(/(\d+)g\b/g, '$1');
+  jsonString = jsonString.replace(/(\d+)g\b/, '$1');
 
-  // 6.3. Convertir error 0% en cadena válida ("0%")
-  jsonString = jsonString.replace(/"error":\s*([\d.]+)%/g, '"error":"$1%"');
 
   // 7. Convertir a objeto JS
   try {
